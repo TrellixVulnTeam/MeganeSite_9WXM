@@ -1,14 +1,59 @@
 <style>
 h1{
-margin-left:30%;
-max-width:80%;
-margin-top:150px;
+margin-left:0px;
+width:80%;
+margin-top:20px;
+text-align: center;
 }
 
 
 </style>
-<h1>THE PROJECT</h1>
+<br><br>
+<span  style="margin-left:20px; width:480px; color:black; background-color:cyan; height:40px; text-align: center; padding-top:10px; float:left; display:block; font-size:16px;" type="number"> 
+  Select if you want to test MongoDB or Cloud Storage
+  </span>  
+<select id='field012' (input)='SelectInput($event)' style="margin-left:20px; padding-left:10px; height:40px; width:180px; color:white; background-color:blue; font-size:16px;" type="number"> 
 
-<h2>============</h2>
+  <option selected value=0>No action</option>
+    <option value=1>Test MongoDB</option>
+    <option value=2>Test Cloud Storage</option> 
+</select>
 
+<div *ngIf="Test_Google_MongoDB===1">
+    <h1> TEST ACCESS TO MONGO DB</h1>
+    
+    <h2>{{Error_msg}}</h2>
+    
+    <h1>Test Tutorial with MongoDB and Node.js</h1>
+    
+      <br><br>
+      <select id='field012' (input)='SelectInput($event)' style="margin-left:20px; width:180px; color:white; background-color:blue; font-size:16px;" type="number"> 
+          <option selected value=3>No action</option>
+          <option value=4>List by title</option>
+          <option value=5>Add tutorial</option>
+          <option value=6>Details for an id</option>   
+      </select>
+      <br><br>
+      <span style='margin-left:20px;'> Selected option is &nbsp; {{MyOption}}</span>
+      <br>
+      <div *ngIf="MyOption===4">
+        <app-tutorials-list></app-tutorials-list>
+      </div>
+      <div *ngIf="MyOption===5">
+        <app-add-tutorial></app-add-tutorial>
+      </div>
+      <div *ngIf="MyOption===6">
+        <app-tutorial-details></app-tutorial-details>
+      </div>
+  </div>   
+    
+  <div *ngIf="Test_Google_MongoDB===2">   
+      <h1> TEST ACCESS TO GOOGLE CLOUD STORAGE USING NODE.JS</h1>
+    
+      <h2>{{Error_msg}}</h2>
+
+      <div class="container" style="width:600px">
+        <app-file-upload></app-file-upload>
+      </div>
+  </div>   
 <router-outlet></router-outlet>

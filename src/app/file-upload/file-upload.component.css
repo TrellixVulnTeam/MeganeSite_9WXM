@@ -1,0 +1,19 @@
+
+.theItem:hover{
+    background-color:cyan;
+    font-size:18px;
+}
+
+.theItem{
+   color:blue;
+   font-size:14px;
+}
+
+.theObject{
+    color:blue;
+    font-size:18px;
+}
+
+.theTitle{
+    font-size:16px;
+}

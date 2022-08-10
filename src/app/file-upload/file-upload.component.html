@@ -1,0 +1,93 @@
+<div *ngIf="TabBuckets.length!==0">
+ <div class="card mt-3">
+    <div class="card-header">List of Buckets</div>
+    
+    <ul
+    class="list-group list-group-flush"
+    *ngFor="let Bucket of TabBuckets "  (click)="selectBucket(Bucket.name)"
+    >
+    <li class="list-group-item theItem">
+       {{ Bucket.name }}
+    </li>
+    </ul>
+    </div>
+
+
+</div>
+
+
+
+<!--
+<h2>Bucket to retrieve</h2>
+<input
+            class="form-control"
+            id="bucket"
+            required
+            [(ngModel)]="bucket"
+            name="bucket"
+          />
+<button (click)="getListObjects()" class="btn btn-success">Submit</button>
+-->
+<div id="targetObject"></div>
+<div *ngIf="bucket!=='' && fileInfos!==undefined">
+        <div class="card mt-3" style="margin-top:25px;">
+            <div class="card-header theTitle"> List of objects from bucket 
+                <span class="theObject"> {{bucket}} </span></div>
+            <ul class="list-group list-group-flush"
+                        *ngFor="let file of fileInfos  "  (click)="RetrieveMetaObject(file.name)"
+            >
+            <li class="list-group-item theItem" >
+               <!-- TO DOWNLOAD THE FILE -->
+               <!--
+                <a href="{{ file.url }}">{{ file.name }}</a>
+                -->
+                {{ file.name }}
+            </li>
+            </ul>
+        </div>
+</div>
+
+
+<div id="targetMeta"></div>
+<div style="margin-top:25px;">
+<h2>Metadata of {{ SelectedObject}} in bucket {{contentMeta.bucket}}</h2>>
+<br>Content Type: {{contentMeta.contentType}}
+<br>File name: {{contentMeta.name}}
+<br>SelfLink: {{contentMeta.selfLink}}
+<br>mediaLink: {{contentMeta.mediaLink}}
+</div>
+
+<div *ngIf="contentMeta.contentType==='application/json'">
+<div style="margin-top:25px;">JSON file is {{jsonFile}}</div>
+</div>
+<div *ngIf="contentMeta.contentType.substring(0,5)==='image'">
+   <img src={{contentMeta.mediaLink}} style="width:150px; height:150px;">
+</div>
+
+<div class="row" style="margin-top:25px;">
+    <div class="col-8">
+    <label class="btn btn-default p-0">
+        <input type="file" (change)="selectFile($event)" />
+    </label>
+    </div>
+    <div class="col-4">
+    <button class="btn btn-success btn-sm" [disabled]="!selectedFiles" (click)="upload()">
+        Upload
+    </button>
+    </div>
+</div>
+
+<div *ngIf="currentFile" class="progress my-3" style="margin-top:25px;">
+    <div
+    class="progress-bar progress-bar-info progress-bar-striped"
+    role="progressbar"
+    attr.aria-valuenow="{{ progress }}"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    [ngStyle]="{ width: progress + '%' }"
+    >
+    {{ progress }}%
+    </div>
+</div>
+<div *ngIf="message" class="alert alert-secondary" role="alert">{{ message }}</div>
+
