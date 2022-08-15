@@ -35,7 +35,7 @@ EXPOSE 8080
 #VOLUME /etc/nginx
 
 ### Docker build command  
-###            docker build -t xmvwebsite:latest .
+###            docker build -t meganesite:latest .
 
 ### Docker run command
-###            docker run -it --rm  --name cont_XMVWebSite -p 8082:8080 image_website:latest
+###            docker run -it --rm  --name cont_meganesite -p 8082:8080 image_website:latest
