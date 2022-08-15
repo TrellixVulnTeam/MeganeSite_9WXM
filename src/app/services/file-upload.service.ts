@@ -40,7 +40,7 @@ export class FileUploadService {
                             
   }
   getListBuckets(): Observable<any> {
-    return this.http.get<any>(this.baseUrl+'/lBucket?project=xmv-it-consulting');
+    return this.http.get<any>(this.baseUrl+'/lBucket');
                             
   }
   getContentObject(bucket:string, object:string): Observable<any> {
