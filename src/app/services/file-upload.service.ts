@@ -14,7 +14,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class FileUploadService {
-  private baseUrl = 'http://localhost:8080';
+  //private baseUrl = 'http://localhost:8080';
+  private baseUrl ='https://test-server-359505.uc.r.appspot.com';
+  
   constructor(private http: HttpClient) { }
 
   upload(bucket:string, file: File): Observable<HttpEvent<any>> {

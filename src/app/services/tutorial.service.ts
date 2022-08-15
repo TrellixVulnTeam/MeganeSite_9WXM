@@ -4,7 +4,9 @@ import { HttpClient,  HttpErrorResponse } from '@angular/common/http';
 import { Tutorial } from 'src/app/components/TutorialClass';
 
 // const baseUrl = 'http://localhost:8080/api/tutorials';
-const baseUrl = 'http://localhost:8080';
+// const baseUrl = 'http://localhost:8080';
+const baseUrl ='https://test-server-359505.uc.r.appspot.com';
+
 @Injectable({
   providedIn: 'root'
 })
