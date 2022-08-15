@@ -15,8 +15,9 @@ import { Observable } from 'rxjs';
 })
 export class FileUploadService {
   //private baseUrl = 'http://localhost:8080';
-  private baseUrl ='https://test-server-359505.uc.r.appspot.com';
-  
+  // private baseUrl ='https://test-server-359505.uc.r.appspot.com'; 
+  // private baseUrl ='https://xmv-server.uc.r.appspot.com';
+  private baseUrl ='https://xmv-it-consulting.uc.r.appspot.com/';
   constructor(private http: HttpClient) { }
 
   upload(bucket:string, file: File): Observable<HttpEvent<any>> {
@@ -39,7 +40,7 @@ export class FileUploadService {
                             
   }
   getListBuckets(): Observable<any> {
-    return this.http.get<any>(this.baseUrl+'/lBucket');
+    return this.http.get<any>(this.baseUrl+'/lBucket?project=xmv-it-consulting');
                             
   }
   getContentObject(bucket:string, object:string): Observable<any> {
