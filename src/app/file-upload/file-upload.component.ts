@@ -3,6 +3,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FileUploadService } from 'src/app/services/file-upload.service';
+import { ManageXMVService } from 'src/app/services/ManageXMV.service';
 import { ViewportScroller } from "@angular/common";
 
 import { BucketList } from '../JsonServerClass';
@@ -13,9 +14,11 @@ import { OneBucketInfo } from '../JsonServerClass';
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.css']
+  styleUrls: ['./file-upload.component.css'],
+  providers:[ManageXMVService, {provide:'baseUrl', useValue: 'http://localhost:8080'}]
 })
-
+// https://xmv-it-consulting.uc.r.appspot.com
+// http://localhost:8080
 export class FileUploadComponent implements OnInit {
   selectedFiles?: FileList;
   currentFile?: File;
@@ -27,14 +30,19 @@ export class FileUploadComponent implements OnInit {
   fileInfos:Array<any>=[];
   SelectedObject:string='';
   bucket:string='';
-  jsonFile:string='';
+  jsonFile:string=''; // new content
+  nameObject:string=''; // new name object
 
 
   constructor(
     private uploadService: FileUploadService,
+    private ManageXMVService: ManageXMVService,
     private scroller: ViewportScroller,
     private http: HttpClient,
+    
     ) { }
+
+
     
 Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
   
@@ -45,6 +53,7 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
 'xavier-monica-mariage-02',
 'xavier-monica-mariage-03',
 'xavier-monica-mariage-04'];
+jsonObject:string='';
 
   ngOnInit(): void {
    this.getListBuckets();
@@ -56,7 +65,8 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
     this.getListObjects();
   }
   getListBuckets(): void {
-    this.uploadService.getListBuckets()
+    //this.uploadService.getListBuckets()
+    this.ManageXMVService.getListBuckets()
     .subscribe(
       data => {
         console.log('successful retrieval of list of buckets ', data);
@@ -73,7 +83,8 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
     this.scroller.scrollToAnchor('targetObject');
     this.message='';
     this.fileInfos.splice(0,this.fileInfos.length);
-     this.uploadService.getFilesBucket(this.bucket)
+    //this.uploadService.getFilesBucket(this.bucket)
+    this.ManageXMVService.getListObjects(this.bucket)
     .subscribe(
       data => {
         console.log('successful retrieval ofb list of objects ', data);
@@ -102,6 +113,8 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
           this. RetrieveObject(this.SelectedObject);
         } else if (data.contentType.substring(0,5)==='image'){     
 
+        } else if (data.contentType ==='application/octet-stream'){     
+          this.updateMetadata();
         } 
         
       },
@@ -117,8 +130,10 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
     .subscribe(
       data => {
         console.log('successful retrieval of content of object ', data);
+        this.currentFile=data;
         this.ContentObject =data;
         this.jsonFile=JSON.stringify(data);
+        this.jsonObject=this.jsonFile;
       },
       error => {
         console.log('failure to get content of object ;  error = ', error);
@@ -126,6 +141,52 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
       });
   }
 
+  updateMetadata(){
+    this.ManageXMVService.updateMetadata(this.bucket, this.SelectedObject )
+      .subscribe(
+        data => {
+          console.log('MetaData successfully updated ', data);
+        },
+        error => {
+          console.log('MetaData not updated ;  error = ', error);
+         
+        });
+  }
+
+  saveObject(){
+    if (this.jsonFile!==this.jsonObject || this.SelectedObject!==this.nameObject){
+
+      // var blob = new Blob([this.jsonObject], {type: 'application/json'});
+      var file=new File ([this.jsonObject],this.nameObject,{type: 'application/json'});
+     
+      this.ManageXMVService.uploadObjectInitial(this.bucket, file )
+      .subscribe(
+        (event: any) => {
+          if (event.type === HttpEventType.UploadProgress) {
+            this.progress = Math.round(100 * event.loaded / event.total);
+            console.log('storage of content of object is in progress ', this.progress);
+          } else if (event instanceof HttpResponse) {
+            this.message = event.body.message;
+            console.log('successful storage of content of object '+this.nameObject);
+            // refresh list of objects
+            this.jsonFile=this.jsonObject;
+            this.SelectedObject=this.nameObject;
+            this.getListObjects();
+          }
+          
+
+        },
+        (err: any) => {
+          console.log(err);
+          this.progress = 0;
+          if (err.error && err.error.message) {
+            this.message = err.error.message;
+          } else {
+            this.message = 'Could not upload the file!';
+          }
+        });
+    }
+  }
 
   upload(): void {
     this.progress = 0;
@@ -133,7 +194,9 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
       const file: File | null = this.selectedFiles.item(0);
       if (file) {
         this.currentFile = file;
-        this.uploadService.upload(this.bucket,this.currentFile).subscribe(
+        //this.uploadService.upload(this.bucket,this.currentFile)
+        this.ManageXMVService.uploadObjectInitial(this.bucket,this.currentFile)
+          .subscribe(
           (event: any) => {
             if (event.type === HttpEventType.UploadProgress) {
               this.progress = Math.round(100 * event.loaded / event.total);
@@ -157,4 +220,6 @@ Tab_Object:Array<string>=['xavier-monica-mariage-00',
       this.selectedFiles = undefined;
     }
   }
+
+
 }

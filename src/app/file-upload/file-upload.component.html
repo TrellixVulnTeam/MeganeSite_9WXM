@@ -59,7 +59,31 @@
 
 <div *ngIf="contentMeta.contentType==='application/json'">
 <div style="margin-top:25px;">JSON file is {{jsonFile}}</div>
+<!-- update field-->
+<div class="form-group">
+    <label for="jsonObject">jsonObject</label>
+    <input
+      type="text"
+      class="form-control"
+      id="jsonObject"
+      required
+      [(ngModel)]="jsonObject"
+      name="jsonObject"
+    />
 </div>
+<div class="form-group">
+    <label for="nameObject">nameObject</label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      required
+      [(ngModel)]="nameObject"
+      name="nameObject"
+    />
+</div>
+<button (click)="saveObject()" class="btn btn-success">Save object</button>
+<br><br>
 <div *ngIf="contentMeta.contentType.substring(0,5)==='image'">
    <img src={{contentMeta.mediaLink}} style="width:150px; height:150px;">
 </div>
