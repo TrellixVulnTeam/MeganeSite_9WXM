@@ -15,7 +15,7 @@ import { OneBucketInfo } from '../JsonServerClass';
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
   styleUrls: ['./file-upload.component.css'],
-  providers:[ManageXMVService, {provide:'baseUrl', useValue: 'http://localhost:8080'}]
+  providers:[ManageXMVService, {provide:'baseUrl', useValue: 'https://xmv-it-consulting.uc.r.appspot.com'}]
 })
 // https://xmv-it-consulting.uc.r.appspot.com
 // http://localhost:8080
