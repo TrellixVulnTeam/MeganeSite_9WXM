@@ -185,3 +185,8 @@ export class Return_Data{
   Error_code=0;
   SaveIsCancelled:boolean=false;
 }
+
+export class configServer{
+  GoogleProjectId:string= '';
+  baseUrl:string= '';
+}

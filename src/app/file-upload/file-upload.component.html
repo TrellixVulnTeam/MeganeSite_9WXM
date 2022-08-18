@@ -15,7 +15,8 @@
 
 </div>
 
-
+<button (click)="reloadGoogle()" class="btn btn-success">Reload GOOGLE</button>
+<br><br>
 
 <!--
 <h2>Bucket to retrieve</h2>
@@ -58,25 +59,27 @@
 </div>
 
 <div *ngIf="contentMeta.contentType==='application/json'">
-<div style="margin-top:25px;">JSON file is {{jsonFile}}</div>
-<!-- update field-->
-<div class="form-group">
-    <label for="jsonObject">jsonObject</label>
-    <input
-      type="text"
-      class="form-control"
-      id="jsonObject"
-      required
-      [(ngModel)]="jsonObject"
-      name="jsonObject"
-    />
+        <div style="margin-top:25px;">JSON file is {{jsonFile}}</div>
+        <!-- update field-->
+        <div class="form-group">
+            <label for="jsonObject">jsonObject</label>
+            <input
+            type="text"
+            class="form-control"
+            id="jsonObject"
+            required
+            [(ngModel)]="jsonObject"
+            name="jsonObject"
+            />
+        </div>
 </div>
+
 <div class="form-group">
-    <label for="nameObject">nameObject</label>
+    <label for="nameObject">name Object to save</label>
     <input
       type="text"
       class="form-control"
-      id="name"
+      id="nameObj"
       required
       [(ngModel)]="nameObject"
       name="nameObject"
@@ -84,6 +87,46 @@
 </div>
 <button (click)="saveObject()" class="btn btn-success">Save object</button>
 <br><br>
+
+<div class="form-group">
+    <label for="nameDelObject">name Object to delete</label>
+    <input
+      type="text"
+      class="form-control"
+      id="nameDelObject"
+      required
+      [(ngModel)]="nameDelObject"
+      name="nameDelObject"
+    />
+</div>
+<button (click)="deleteObject()" class="btn btn-success">Delete object</button>
+<br><br>
+
+<h2>Rename object</h2>
+<div class="form-group">
+    <label for="SRCobjectName">Source name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="SRCobjectName"
+      required
+      [(ngModel)]="SRCobjectName"
+      name="SRCobjectName"
+    />
+    <label for="DESTCobjectName">Destination name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="DESTobjectName"
+      required
+      [(ngModel)]="DESTobjectName"
+      name="DESTobjectName"
+    />
+</div>
+<button (click)="renameObject()" class="btn btn-success">Rename object</button>
+<br><br>
+
+
 <div *ngIf="contentMeta.contentType.substring(0,5)==='image'">
    <img src={{contentMeta.mediaLink}} style="width:150px; height:150px;">
 </div>
@@ -103,12 +146,12 @@
 
 <div *ngIf="currentFile" class="progress my-3" style="margin-top:25px;">
     <div
-    class="progress-bar progress-bar-info progress-bar-striped"
-    role="progressbar"
-    attr.aria-valuenow="{{ progress }}"
-    aria-valuemin="0"
-    aria-valuemax="100"
-    [ngStyle]="{ width: progress + '%' }"
+            class="progress-bar progress-bar-info progress-bar-striped"
+            role="progressbar"
+            attr.aria-valuenow="{{ progress }}"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [ngStyle]="{ width: progress + '%' }"
     >
     {{ progress }}%
     </div>

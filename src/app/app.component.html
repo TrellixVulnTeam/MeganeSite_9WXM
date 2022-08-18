@@ -37,13 +37,13 @@ text-align: center;
       <span style='margin-left:20px;'> Selected option is &nbsp; {{MyOption}}</span>
       <br>
       <div *ngIf="MyOption===4">
-        <app-tutorials-list></app-tutorials-list>
+        <app-tutorials-list [configServer]="configServer"></app-tutorials-list>
       </div>
       <div *ngIf="MyOption===5">
-        <app-add-tutorial></app-add-tutorial>
+        <app-add-tutorial [configServer]="configServer"></app-add-tutorial>
       </div>
       <div *ngIf="MyOption===6">
-        <app-tutorial-details></app-tutorial-details>
+        <app-tutorial-details [configServer]="configServer"></app-tutorial-details>
       </div>
   </div>   
     
@@ -53,7 +53,7 @@ text-align: center;
       <h2>{{Error_msg}}</h2>
 
       <div class="container" style="width:600px">
-        <app-file-upload></app-file-upload>
+        <app-file-upload [configServer]="configServer"></app-file-upload>
       </div>
   </div>   
 <router-outlet></router-outlet>

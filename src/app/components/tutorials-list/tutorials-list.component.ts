@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { TutorialService } from 'src/app/services/tutorial.service';
 import { Tutorial } from 'src/app/components/TutorialClass';
 import { ActivatedRoute, Router } from '@angular/router';
+import { configServer } from '../../JsonServerClass';
 
 @Component({
   selector: 'app-tutorials-list',
@@ -9,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./tutorials-list.component.css']
 })
 export class TutorialsListComponent implements OnInit {
+  @Input() configServer=new configServer;
   tutorials :any;
   currentTutorial = new Tutorial;
   modifiedTutorial = new Tutorial;
@@ -23,7 +25,7 @@ export class TutorialsListComponent implements OnInit {
    // this.retrieveTutorials();
   }
   retrieveTutorials(): void {
-    this.tutorialService.getAll()
+    this.tutorialService.getAll(this.configServer)
       .subscribe(
         data => {
           this.tutorials = data;
@@ -54,7 +56,7 @@ export class TutorialsListComponent implements OnInit {
     this.currentIndex = index;
   }
   removeAllTutorials(): void {
-    this.tutorialService.deleteAll()
+    this.tutorialService.deleteAll(this.configServer)
       .subscribe(
         response => {
           console.log(response);
@@ -68,7 +70,7 @@ export class TutorialsListComponent implements OnInit {
     if (this.title===''){
       this.retrieveTutorials();
     } else {
-        this.tutorialService.findByTitle(this.title)
+        this.tutorialService.findByTitle(this.configServer,this.title)
           .subscribe(
             data => {
               this.tutorials = data;
@@ -86,7 +88,7 @@ export class TutorialsListComponent implements OnInit {
     }
 
     UpdateTutorial(){
-      this.tutorialService.update(this.modifiedTutorial.id, this.modifiedTutorial)
+      this.tutorialService.update(this.configServer,this.modifiedTutorial.id, this.modifiedTutorial)
       .subscribe(
         data => {
           console.log('update of id ', data);

@@ -9,17 +9,19 @@ import { ViewportScroller } from "@angular/common";
 import { BucketList } from '../JsonServerClass';
 import { Bucket_List_Info } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
-
+import { configServer } from '../JsonServerClass';
 
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.css'],
-  providers:[ManageXMVService, {provide:'baseUrl', useValue: 'https://xmv-it-consulting.uc.r.appspot.com'}]
+  styleUrls: ['./file-upload.component.css']
+  // providers:[ManageXMVService, {provide:'baseURL', useValue: ' http://localhost:8080'}]
 })
 // https://xmv-it-consulting.uc.r.appspot.com
 // http://localhost:8080
 export class FileUploadComponent implements OnInit {
+
+  @Input() configServer=new configServer;
   selectedFiles?: FileList;
   currentFile?: File;
   progress = 0;
@@ -31,8 +33,11 @@ export class FileUploadComponent implements OnInit {
   SelectedObject:string='';
   bucket:string='';
   jsonFile:string=''; // new content
+  jsonObject:string='';
   nameObject:string=''; // new name object
-
+  nameDelObject:string=''; // name object to delete
+  SRCobjectName:string='';
+  DESTobjectName:string='';
 
   constructor(
     private uploadService: FileUploadService,
@@ -41,19 +46,6 @@ export class FileUploadComponent implements OnInit {
     private http: HttpClient,
     
     ) { }
-
-
-    
-Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
-  
-Google_Bucket_Name:string='manage-login'; 
-Tab_photos:Array<string>=[];
-Tab_Object:Array<string>=['xavier-monica-mariage-00',
-'xavier-monica-mariage-01',
-'xavier-monica-mariage-02',
-'xavier-monica-mariage-03',
-'xavier-monica-mariage-04'];
-jsonObject:string='';
 
   ngOnInit(): void {
    this.getListBuckets();
@@ -66,7 +58,7 @@ jsonObject:string='';
   }
   getListBuckets(): void {
     //this.uploadService.getListBuckets()
-    this.ManageXMVService.getListBuckets()
+    this.ManageXMVService.getListBuckets(this.configServer)
     .subscribe(
       data => {
         console.log('successful retrieval of list of buckets ', data);
@@ -84,7 +76,7 @@ jsonObject:string='';
     this.message='';
     this.fileInfos.splice(0,this.fileInfos.length);
     //this.uploadService.getFilesBucket(this.bucket)
-    this.ManageXMVService.getListObjects(this.bucket)
+    this.ManageXMVService.getListObjects(this.configServer, this.bucket)
     .subscribe(
       data => {
         console.log('successful retrieval ofb list of objects ', data);
@@ -104,7 +96,7 @@ jsonObject:string='';
     this.scroller.scrollToAnchor('targetMeta');
     this.jsonFile='';
     this.SelectedObject=event;
-    this.uploadService.getMetaObject(this.bucket,this.SelectedObject)
+    this.ManageXMVService.getMetaObject(this.configServer, this.bucket,this.SelectedObject)
     .subscribe(
       data => {
         console.log('successful retrieval of meta object ', data);
@@ -126,7 +118,7 @@ jsonObject:string='';
 
   RetrieveObject(event:string){
     this.SelectedObject=event;
-    this.uploadService.getContentObject(this.bucket,this.SelectedObject)
+    this.ManageXMVService.getContentObject(this.configServer, this.bucket,this.SelectedObject)
     .subscribe(
       data => {
         console.log('successful retrieval of content of object ', data);
@@ -134,6 +126,7 @@ jsonObject:string='';
         this.ContentObject =data;
         this.jsonFile=JSON.stringify(data);
         this.jsonObject=this.jsonFile;
+        this.nameObject=this.SelectedObject;
       },
       error => {
         console.log('failure to get content of object ;  error = ', error);
@@ -142,7 +135,7 @@ jsonObject:string='';
   }
 
   updateMetadata(){
-    this.ManageXMVService.updateMetadata(this.bucket, this.SelectedObject )
+    this.ManageXMVService.updateMetadata(this.configServer, this.bucket, this.SelectedObject )
       .subscribe(
         data => {
           console.log('MetaData successfully updated ', data);
@@ -156,10 +149,10 @@ jsonObject:string='';
   saveObject(){
     if (this.jsonFile!==this.jsonObject || this.SelectedObject!==this.nameObject){
 
-      // var blob = new Blob([this.jsonObject], {type: 'application/json'});
+      var blob = new Blob([this.jsonObject], {type: 'application/json'});
       var file=new File ([this.jsonObject],this.nameObject,{type: 'application/json'});
      
-      this.ManageXMVService.uploadObjectInitial(this.bucket, file )
+      this.ManageXMVService.uploadObjectInitial(this.configServer, this.bucket, file )
       .subscribe(
         (event: any) => {
           if (event.type === HttpEventType.UploadProgress) {
@@ -169,8 +162,10 @@ jsonObject:string='';
             this.message = event.body.message;
             console.log('successful storage of content of object '+this.nameObject);
             // refresh list of objects
-            this.jsonFile=this.jsonObject;
-            this.SelectedObject=this.nameObject;
+            this.SelectedObject='';
+            this.nameObject='';
+            this.jsonFile='';
+            this.jsonObject='';
             this.getListObjects();
           }
           
@@ -188,6 +183,60 @@ jsonObject:string='';
     }
   }
 
+  deleteObject(){
+    
+    this.ManageXMVService.deleteObject(this.configServer, this.bucket,this.nameDelObject)
+    .subscribe(
+      data => {
+        console.log('successful deletion of object ', data);
+        this.nameDelObject='';
+        this.SelectedObject='';
+        this.nameObject='';
+        this.jsonFile='';
+        this.jsonObject='';
+        this.getListObjects();
+      },
+      error => {
+        console.log('failure to delete object ;  error = ', error);
+       
+      });
+  }
+
+  renameObject(){
+    
+    this.ManageXMVService.renameObject(this.configServer, this.bucket,this.SRCobjectName, this.DESTobjectName)
+    .subscribe(
+      data => {
+        console.log('successful renaming of object ', data);
+        this.SRCobjectName='';
+        this.DESTobjectName='';
+        this.nameDelObject='';
+        this.SelectedObject='';
+        this.nameObject='';
+        this.jsonFile='';
+        this.jsonObject='';
+        this.getListObjects();
+      },
+      error => {
+        console.log('failure to rename object ;  error = ', error);
+       
+      });
+  }
+  reloadGoogle(){
+        this.SRCobjectName='';
+        this.DESTobjectName='';
+        this.nameDelObject='';
+        this.SelectedObject='';
+        this.nameObject='';
+        this.jsonFile='';
+        this.jsonObject='';
+        this.currentFile = undefined;
+        this.selectedFiles = undefined;
+        this.contentMeta=new OneBucketInfo;
+        this.fileInfos.splice(0, this.fileInfos.length);
+        this.getListBuckets();
+  }
+
   upload(): void {
     this.progress = 0;
     if (this.selectedFiles) {
@@ -195,7 +244,7 @@ jsonObject:string='';
       if (file) {
         this.currentFile = file;
         //this.uploadService.upload(this.bucket,this.currentFile)
-        this.ManageXMVService.uploadObjectInitial(this.bucket,this.currentFile)
+        this.ManageXMVService.uploadObjectInitial(this.configServer, this.bucket,this.currentFile)
           .subscribe(
           (event: any) => {
             if (event.type === HttpEventType.UploadProgress) {

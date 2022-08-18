@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { TutorialService } from 'src/app/services/tutorial.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Tutorial } from 'src/app/components/TutorialClass';
+import { configServer } from '../../JsonServerClass';
 
 @Component({
   selector: 'app-tutorial-details',
@@ -9,7 +10,7 @@ import { Tutorial } from 'src/app/components/TutorialClass';
   styleUrls: ['./tutorial-details.component.css']
 })
 export class TutorialDetailsComponent implements OnInit {
-
+  @Input() configServer=new configServer;
   currentTutorial = new Tutorial;
   message = '';
   constructor(
@@ -22,7 +23,7 @@ export class TutorialDetailsComponent implements OnInit {
    // this.getTutorial(this.route.snapshot.paramMap.get('id'));
   }
   getTutorial(id:any): void {
-    this.tutorialService.get(id)
+    this.tutorialService.get(this.configServer,id)
       .subscribe(
         data => {
           this.currentTutorial = data;
@@ -38,7 +39,7 @@ export class TutorialDetailsComponent implements OnInit {
       description: this.currentTutorial.description,
       published: status
     };
-    this.tutorialService.update(this.currentTutorial.id, data)
+    this.tutorialService.update(this.configServer,this.currentTutorial.id, data)
       .subscribe(
         response => {
           this.currentTutorial.published = status;
@@ -49,7 +50,7 @@ export class TutorialDetailsComponent implements OnInit {
         });
   }
   updateTutorial(): void {
-    this.tutorialService.update(this.currentTutorial.id, this.currentTutorial)
+    this.tutorialService.update(this.configServer,this.currentTutorial.id, this.currentTutorial)
       .subscribe(
         response => {
           console.log(response);
@@ -60,7 +61,7 @@ export class TutorialDetailsComponent implements OnInit {
         });
   }
   deleteTutorial(): void {
-    this.tutorialService.delete(this.currentTutorial.id)
+    this.tutorialService.delete(this.configServer,this.currentTutorial.id)
       .subscribe(
         response => {
           console.log(response);
